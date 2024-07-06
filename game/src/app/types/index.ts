@@ -28,7 +28,6 @@ export enum GameCellType {
 export type GameTimer = {
   time: number;
   start: Date;
-  interval: NodeJS.Timeout | null;
 };
 
 export type GameCell = {
@@ -43,6 +42,7 @@ export type GameMatrix = {
 };
 
 export type GameSnake = {
+  array: Array<Position>;
   length: number;
   head: Position;
   tail: Position;
