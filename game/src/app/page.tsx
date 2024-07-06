@@ -4,7 +4,7 @@ import { useState } from "react";
 import GameMenu from "./components/game-menu";
 import Matrix from "./components/matrix";
 import { DEFAULT_MATRIX_HEIGHT, DEFAULT_MATRIX_WIDTH } from "./const";
-import { createEmptyMatrix } from "./core/matrix";
+import { createEmptyMatrixWithSnake } from "./core/matrix";
 import { createTimer, getDefaultGameState, increaseTimer } from "./core/state";
 import { GameStatus } from "./types";
 
@@ -40,7 +40,7 @@ export default function Home() {
       ...gameState,
       timer: newTimer,
       status: GameStatus.PLAYING,
-      matrix: createEmptyMatrix(height, width),
+      matrix: createEmptyMatrixWithSnake(height, width),
     });
   };
 

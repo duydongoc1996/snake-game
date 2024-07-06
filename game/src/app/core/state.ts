@@ -1,11 +1,11 @@
 import {
   DEFAULT_MATRIX_HEIGHT,
   DEFAULT_MATRIX_WIDTH,
-  DEFAULT_SNAKE_LENGTH,
   FRAME_TICK,
 } from "../const";
-import { Direction, GameState, GameStatus, GameTimer } from "../types";
-import { createEmptyMatrix } from "./matrix";
+import { GameState, GameStatus, GameTimer } from "../types";
+import { createEmptyMatrixWithSnake } from "./matrix";
+import { getDefaultSnake } from "./snake";
 
 export function getDefaultGameState(): GameState {
   return {
@@ -15,13 +15,11 @@ export function getDefaultGameState(): GameState {
       start: new Date(),
       interval: null,
     },
-    matrix: createEmptyMatrix(DEFAULT_MATRIX_HEIGHT, DEFAULT_MATRIX_WIDTH),
-    snake: {
-      length: DEFAULT_SNAKE_LENGTH,
-      head: { x: 0, y: 0 },
-      tail: { x: 0, y: 0 },
-      direction: Direction.RIGHT,
-    },
+    matrix: createEmptyMatrixWithSnake(
+      DEFAULT_MATRIX_HEIGHT,
+      DEFAULT_MATRIX_WIDTH
+    ),
+    snake: getDefaultSnake(),
     bait: {
       position: { x: 0, y: 0 },
     },
