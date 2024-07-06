@@ -26,9 +26,9 @@ export enum GameCellType {
 }
 
 export type GameTimer = {
-  step: number;
+  time: number;
   start: Date;
-  interval: number | null;
+  interval: NodeJS.Timeout | null;
 };
 
 export type GameCell = {

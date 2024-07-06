@@ -1,17 +1,8 @@
-import { useState } from "react";
 import { GameState } from "../types";
 
-export default function Matrix(props: {
-  height: number;
-  width: number;
-  gameState: GameState;
-}) {
-  console.log(`Render matrix:  ${props.height}x${props.width}`);
-
-  const [matrix, setMatrix] = useState(
-    Array.from({ length: props.height }, () =>
-      Array.from({ length: props.width }, () => null)
-    )
+export default function Matrix(props: { gameState: GameState }) {
+  console.log(
+    `Render matrix:  ${props.gameState.matrix.height}x${props.gameState.matrix.width}`
   );
 
   return (
@@ -19,7 +10,7 @@ export default function Matrix(props: {
       <div className="border-8 border-green-500">
         <table className="table-fixed">
           <tbody>
-            {matrix.map((row, rowIndex) => {
+            {props.gameState.matrix.objects.map((row, rowIndex) => {
               return (
                 <tr key={rowIndex}>
                   {row.map((cell, cellIndex) => (
