@@ -1,4 +1,5 @@
 import { GameState } from "../types";
+import Cell from "./cell";
 
 export default function Matrix(props: { gameState: GameState }) {
   console.log(
@@ -14,7 +15,11 @@ export default function Matrix(props: { gameState: GameState }) {
               return (
                 <tr key={rowIndex}>
                   {row.map((cell, cellIndex) => (
-                    <Cell cell={cell} key={cellIndex} />
+                    <Cell
+                      gameState={props.gameState}
+                      cell={cell}
+                      key={cellIndex}
+                    />
                   ))}
                 </tr>
               );
@@ -24,8 +29,4 @@ export default function Matrix(props: { gameState: GameState }) {
       </div>
     </div>
   );
-}
-
-function Cell(props: { cell: any }) {
-  return <td className="w-10 h-10 border border-gray-300"></td>;
 }
