@@ -72,8 +72,17 @@ Snake
       + input width, height
       + start
       + arrow button
-      
-      
+    + Game routing:
+      + Home page (/)
+        + Welcome
+        + Input WIDTH & HEIGHT
+        + Start Button
+        + Matrix, Snake, Bait
+        + Timer
+        + Result popup (WIN or LOSE)
+        + Restart Button (Reload page)
+        
+  
 
   
 
