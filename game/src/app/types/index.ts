@@ -27,7 +27,7 @@ export enum GameCellType {
 
 export type GameTimer = {
   time: number;
-  start: Date;
+  start: Date | null;
 };
 
 export type GameCell = {
@@ -62,5 +62,5 @@ export type GameState = {
 
   snake: GameSnake;
 
-  bait: GameBait;
+  bait: GameBait | null;
 };

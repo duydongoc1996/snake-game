@@ -1,6 +1,7 @@
 "use client";
 
 import { produce } from "immer";
+import * as _ from "lodash";
 import { useEffect, useState } from "react";
 import GameMenu from "./components/game-menu";
 import Matrix from "./components/matrix";
@@ -9,9 +10,10 @@ import {
   DEFAULT_MATRIX_WIDTH,
   FRAME_TICK,
 } from "./const";
+import { generateBait } from "./core/bait";
 import { addKeyboardListeners } from "./core/keyboard";
-import { createEmptyMatrixWithSnake } from "./core/matrix";
-import { moveSnake } from "./core/snake";
+import { createEmptyMatrix } from "./core/matrix";
+import { getDefaultSnake, injectSnakeToMatrix, moveSnake } from "./core/snake";
 import { getDefaultGameState } from "./core/state";
 import { Direction, GameStatus } from "./types";
 
@@ -19,7 +21,7 @@ export default function Game() {
   const [gameState, setGameState] = useState(getDefaultGameState());
   const [width, setWidth] = useState(DEFAULT_MATRIX_WIDTH);
   const [height, setHeight] = useState(DEFAULT_MATRIX_HEIGHT);
-  let [intervalID, setIntervalID] = useState<NodeJS.Timeout | null>(null);
+  const [intervalID, setIntervalID] = useState<any>(null);
 
   console.log("State: ", gameState);
 
@@ -71,42 +73,51 @@ export default function Game() {
   };
 
   const onWin = () => {
-    alert("You win!");
-    window.location.reload();
+    if (intervalID) window.clearInterval(intervalID);
+    console.log("You win!");
   };
 
   const onLose = () => {
-    alert("You lose!");
-    window.location.reload();
+    if (intervalID) window.clearInterval(intervalID);
+    console.log("You lose!");
   };
 
   const onStart = () => {
-    // Remove old interval
-    if (intervalID) clearInterval(intervalID);
+    // Remove old intervalID
+    if (intervalID) window.clearInterval(intervalID);
 
     // Start new game
     setGameState(
       produce(gameState, (draft) => {
         draft.status = GameStatus.PLAYING;
-        draft.matrix = createEmptyMatrixWithSnake(height, width);
+        draft.snake = getDefaultSnake();
+        draft.timer.time = 0;
+        draft.timer.start = new Date();
+        draft.matrix = _.flow([createEmptyMatrix, injectSnakeToMatrix])(
+          height,
+          width
+        );
+        generateBait(draft);
       }) // Reset the game state
     );
 
-    // Start an infinite loop
-    setIntervalID(
-      setInterval(() => {
-        // Run this every frame
-        setGameState((state) =>
-          produce(state, (draft) => {
-            moveSnake(draft, onWin, onLose);
-            draft.timer.start = new Date();
-            draft.timer.time += 1;
+    // Start an infinite intervalID
+    const loop = window.setInterval(() => {
+      // Run this every frame
+      setGameState((state) =>
+        produce(state, (draft) => {
+          moveSnake(draft, onWin, onLose);
+          console.debug("in: ", intervalID);
 
-            return draft;
-          })
-        );
-      }, FRAME_TICK)
-    );
+          draft.timer.time += 1;
+
+          return draft;
+        })
+      );
+    }, FRAME_TICK);
+    console.debug("loop: ", loop);
+
+    setIntervalID(loop);
 
     console.log("Start game");
   };
