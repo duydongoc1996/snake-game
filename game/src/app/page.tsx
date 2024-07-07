@@ -1,8 +1,8 @@
 "use client";
 
 import { produce } from "immer";
-import * as _ from "lodash";
 import { useEffect, useState } from "react";
+import { useInterval } from "usehooks-ts";
 import GameMenu from "./components/game-menu";
 import Matrix from "./components/matrix";
 import {
@@ -10,20 +10,20 @@ import {
   DEFAULT_MATRIX_WIDTH,
   FRAME_TICK,
 } from "./const";
-import { generateBait } from "./core/bait";
 import { addKeyboardListeners } from "./core/keyboard";
-import { createEmptyMatrix } from "./core/matrix";
-import { getDefaultSnake, injectSnakeToMatrix, moveSnake } from "./core/snake";
-import { getDefaultGameState } from "./core/state";
+import { validateMatrixSize } from "./core/matrix";
+import { moveSnake, printSnake } from "./core/snake";
+import { getDefaultGameState, getNewGameState } from "./core/state";
 import { Direction, GameStatus } from "./types";
 
 export default function Game() {
   const [gameState, setGameState] = useState(getDefaultGameState());
   const [width, setWidth] = useState(DEFAULT_MATRIX_WIDTH);
   const [height, setHeight] = useState(DEFAULT_MATRIX_HEIGHT);
-  const [intervalID, setIntervalID] = useState<any>(null);
 
-  console.log("State: ", gameState);
+  useEffect(() => {
+    printSnake(gameState.snake);
+  }, []); // Runs only on mount and unmount
 
   const onKeyUp = () => {
     setGameState((state) =>
@@ -64,8 +64,8 @@ export default function Game() {
   }, []); // Runs only on mount and unmount
 
   const onChangeHeight = (height: number) => {
-    setHeight(height);
     console.log("Change height", height);
+    setHeight(height);
   };
   const onChangeWidth = (width: number) => {
     console.log("Change width", width);
@@ -73,54 +73,47 @@ export default function Game() {
   };
 
   const onWin = () => {
-    if (intervalID) window.clearInterval(intervalID);
     console.log("You win!");
   };
 
   const onLose = () => {
-    if (intervalID) window.clearInterval(intervalID);
     console.log("You lose!");
   };
 
   const onStart = () => {
-    // Remove old intervalID
-    if (intervalID) window.clearInterval(intervalID);
+    // Validate matrix size
+    if (!validateMatrixSize({ height, width }))
+      return console.error("Invalid matrix size");
 
     // Start new game
     setGameState(
       produce(gameState, (draft) => {
-        draft.status = GameStatus.PLAYING;
-        draft.snake = getDefaultSnake();
-        draft.timer.time = 0;
-        draft.timer.start = new Date();
-        draft.matrix = _.flow([createEmptyMatrix, injectSnakeToMatrix])(
-          height,
-          width
-        );
-        generateBait(draft);
-      }) // Reset the game state
+        draft.matrix.height = height;
+        draft.matrix.width = width;
+        getNewGameState(draft);
+      })
     );
 
-    // Start an infinite intervalID
-    const loop = window.setInterval(() => {
+    console.log("Start game");
+  };
+
+  // Game loop
+  useInterval(
+    () => {
       // Run this every frame
       setGameState((state) =>
         produce(state, (draft) => {
           moveSnake(draft, onWin, onLose);
-          console.debug("in: ", intervalID);
-
           draft.timer.time += 1;
-
           return draft;
         })
       );
-    }, FRAME_TICK);
-    console.debug("loop: ", loop);
-
-    setIntervalID(loop);
-
-    console.log("Start game");
-  };
+      printSnake(gameState.snake);
+      // printMatrix(gameState.matrix);
+    },
+    // Delay in milliseconds or null to stop it
+    gameState.status === GameStatus.PLAYING ? FRAME_TICK : null
+  );
 
   return (
     <main className="flex min-h-screen flex-col items-center pt-10">
