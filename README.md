@@ -2,7 +2,7 @@
 Snake game project
 
 
-# Requirements: 
+# I. Requirements: 
 Snake
 - User input the width and height for a matrix.
 - The initial length of the snake is 3. Start at 0x0 position
@@ -17,9 +17,17 @@ Snake
 - Print to console the snake step by step to find and consume the bait (don't clear the console after each step).
 
 
-# Setup and Run
+# II.Setup and Run
+## 1. System requirements:
+- NodeJS v21.5.0
+## 2. Run
 ```
+cd ./game
+npm install
+npm run dev
 ```
+## 3. Open browser
+- http://localhost:3000
 
 
 # Overview & Solutions
@@ -46,6 +54,7 @@ Snake
         + Moving to an empty space:
           + Add new head in empty space (with direction)
           + Remove tail
+          + Update new tail
           + Replace old head with body
         + Moving to bail space:
           + Add new head in empty space (with direction)
