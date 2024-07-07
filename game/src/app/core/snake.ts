@@ -2,10 +2,12 @@ import { DEFAULT_SNAKE_LENGTH } from "../const";
 import {
   Direction,
   GameCellType,
+  GameMatrix,
   GameState,
   GameStatus,
   Position,
 } from "../types";
+import { generateBait } from "./bait";
 
 export function getDefaultSnake() {
   return {
@@ -19,6 +21,25 @@ export function getDefaultSnake() {
     tail: { x: 0, y: 0 },
     direction: Direction.DOWN,
   };
+}
+
+export function injectSnakeToMatrix(gameMatrix: GameMatrix): GameMatrix {
+  const { objects } = gameMatrix;
+  const snake = getDefaultSnake();
+
+  // Inject snake to matrix
+  snake.array.forEach((position, index) => {
+    const type =
+      index === 0
+        ? GameCellType.TAIL
+        : index === snake.array.length - 1
+        ? GameCellType.HEAD
+        : GameCellType.BODY;
+
+    objects[position.y][position.x] = { type };
+  });
+
+  return gameMatrix;
 }
 
 export function moveSnake(
@@ -44,7 +65,7 @@ export function moveSnake(
   // Check next move
   const movements = {
     [GameCellType.EMPTY]: () => moveToEmptyCell(gameState, newHead),
-    [GameCellType.BAIT]: () => moveToBait(gameState, onWin),
+    [GameCellType.BAIT]: () => moveToBait(gameState, newHead, onWin),
     [GameCellType.HEAD]: () => moveToItself(gameState, onLose),
     [GameCellType.BODY]: () => moveToItself(gameState, onLose),
     [GameCellType.TAIL]: () => moveToItself(gameState, onLose),
@@ -77,7 +98,28 @@ function moveToEmptyCell(gameState: GameState, newHead: Position) {
 
   return gameState;
 }
-function moveToBait(gameState: GameState, onWin: () => void) {
+function moveToBait(
+  gameState: GameState,
+  newHead: Position,
+  onWin: () => void
+) {
+  const head = gameState.snake.head;
+
+  // Add new head in empty space (with direction)
+  gameState.snake.head = newHead;
+  gameState.matrix.objects[newHead.y][newHead.x] = { type: GameCellType.HEAD };
+  gameState.snake.array.push(newHead);
+
+  // Replace old head with body
+  gameState.matrix.objects[head.y][head.x] = { type: GameCellType.BODY };
+
+  // Generate new bait, if can not, WIN
+  if (!generateBait(gameState)) {
+    gameState.status = GameStatus.WIN;
+
+    onWin();
+  }
+
   return gameState;
 }
 function moveToItself(gameState: GameState, onLose: () => void) {

@@ -17,7 +17,7 @@ export default function Cell(props: { gameState: GameState; cell: GameCell }) {
       ),
       [GameCellType.BODY]: <span>&#11044;</span>,
       [GameCellType.TAIL]: <span>&#11044;</span>,
-      [GameCellType.BAIT]: <span>&#x2B24;</span>,
+      [GameCellType.BAIT]: <span className="text-red-400">&#x2B24;</span>,
     }[cell.type]);
 
   return (

@@ -1,22 +1,21 @@
+import * as _ from "lodash";
 import { DEFAULT_MATRIX_HEIGHT, DEFAULT_MATRIX_WIDTH } from "../const";
 import { GameState, GameStatus } from "../types";
-import { createEmptyMatrixWithSnake } from "./matrix";
-import { getDefaultSnake } from "./snake";
+import { createEmptyMatrix } from "./matrix";
+import { getDefaultSnake, injectSnakeToMatrix } from "./snake";
 
 export function getDefaultGameState(): GameState {
   return {
     status: GameStatus.INIT,
     timer: {
       time: 0,
-      start: new Date(),
+      start: null,
     },
-    matrix: createEmptyMatrixWithSnake(
+    matrix: _.flow([createEmptyMatrix, injectSnakeToMatrix])(
       DEFAULT_MATRIX_HEIGHT,
       DEFAULT_MATRIX_WIDTH
     ),
     snake: getDefaultSnake(),
-    bait: {
-      position: { x: 0, y: 0 },
-    },
+    bait: null,
   };
 }
