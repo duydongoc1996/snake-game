@@ -1,6 +1,6 @@
 # snake-game
 Snake game project
-
+![alt text](./docs/img/game.png)
 
 # I. Requirements: 
 Snake
