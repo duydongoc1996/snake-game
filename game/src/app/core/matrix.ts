@@ -1,10 +1,21 @@
+import {
+  MAX_MATRIX_HEIGHT,
+  MAX_MATRIX_WIDTH,
+  MIN_MATRIX_HEIGHT,
+  MIN_MATRIX_WIDTH,
+} from "../const";
 import { GameCellType, GameMatrix } from "../types";
 
 export function validateMatrixSize(size: {
   height: number;
   width: number;
 }): boolean {
-  if (size.height < 3 || size.height > 20 || size.width < 3 || size.width > 20)
+  if (
+    size.height < MIN_MATRIX_HEIGHT ||
+    size.height > MAX_MATRIX_HEIGHT ||
+    size.width < MIN_MATRIX_WIDTH ||
+    size.width > MAX_MATRIX_WIDTH
+  )
     return false;
 
   return true;
