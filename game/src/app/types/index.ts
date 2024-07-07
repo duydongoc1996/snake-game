@@ -18,7 +18,7 @@ export enum GameStatus {
 }
 
 export enum GameCellType {
-  EMPTY = "EMPTY",
+  EMPTY = "",
   BODY = "BODY",
   HEAD = "HEAD",
   TAIL = "TAIL",

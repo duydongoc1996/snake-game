@@ -3,11 +3,12 @@ import {
   Direction,
   GameCellType,
   GameMatrix,
+  GameSnake,
   GameState,
   GameStatus,
   Position,
 } from "../types";
-import { generateBait } from "./bait";
+import { generateBait, injectBaitToMatrix } from "./bait";
 
 export function getDefaultSnake() {
   return {
@@ -61,6 +62,7 @@ export function moveSnake(
   };
 
   const newHead = (directions[direction] || directions["default"])();
+  console.log("Move: ", newHead);
 
   // Check next move
   const movements = {
@@ -114,11 +116,11 @@ function moveToBait(
   gameState.matrix.objects[head.y][head.x] = { type: GameCellType.BODY };
 
   // Generate new bait, if can not, WIN
-  if (!generateBait(gameState)) {
+  const bait = generateBait(gameState);
+  if (!bait) {
     gameState.status = GameStatus.WIN;
-
     onWin();
-  }
+  } else gameState.matrix = injectBaitToMatrix(bait)(gameState.matrix);
 
   return gameState;
 }
@@ -131,4 +133,12 @@ function moveToWall(gameState: GameState, onLose: () => void) {
   gameState.status = GameStatus.LOSE;
   onLose();
   return gameState;
+}
+
+export function printSnake(snake: GameSnake): void {
+  console.debug(
+    `Snake: TAIL->${snake.array
+      .map((p) => `(${p.x}, ${p.y})`)
+      .join(" -> ")}->HEAD`
+  );
 }

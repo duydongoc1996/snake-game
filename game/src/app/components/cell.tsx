@@ -13,7 +13,7 @@ export default function Cell(props: { gameState: GameState; cell: GameCell }) {
     ({
       [GameCellType.EMPTY]: <span></span>,
       [GameCellType.HEAD]: (
-        <span className="text-4xl">{buildHead(gameState)}</span>
+        <span className="text-3xl">{buildHead(gameState)}</span>
       ),
       [GameCellType.BODY]: <span>&#11044;</span>,
       [GameCellType.TAIL]: <span>&#11044;</span>,
